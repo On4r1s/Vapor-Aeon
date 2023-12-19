@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Game Search</title>
+    <link rel="icon" th:src="@{images/VA-logo.png}">
+    <link rel="stylesheet" href="styleSearchPage.css">
+    <script th:inline="javascript">
+        function ControlPage(doing) {
+            var link = document.location.search.substr(1);
+            var oldpage = parseInt(document.getElementById("Page_number").value);
+            var newpage = 1;
+            var maxpage = /*[[${maxPage}]]*/ 1;
+            if (doing == 'first') {
+                newpage = 1;
+            } else if (doing == 'minus') {
+                newpage = oldpage - 1;
+            } else if (doing == 'plus') {
+                newpage = oldpage + 1;
+            } else if (doing == 'last') {
+                newpage = maxpage;
+            } else {
+                newpage = parseInt(doing);
+            }
+            if (newpage > maxpage) {
+                newpage = 1;
+            }
+            link = insertParam2(link, 'Page', newpage);
+            document.location = '/search?' + link;
+        }
+
+        function insertParam2(url, key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+            var kvp = url.split('&');
+            let i = 0;
+            for (; i < kvp.length; i++) {
+                if (kvp[i].startsWith(key + '=')) {
+                    let pair = kvp[i].split('=');
+                    pair[1] = value;
+                    kvp[i] = pair.join('=');
+                    break;
+                }
+            }
+            if (i >= kvp.length) {
+                kvp[kvp.length] = [key, value].join('=');
+            }
+            return kvp.join('&')
+        }
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+            return -1;
+        }
+
+        function forText(variable) {
+            let text = getQueryVariable(variable);
+            text = text.replaceAll("+", " ");
+            if (text != -1 && text != "") {
+                return text
+            } else {
+                return null
+            }
+        }
+
+        function forSlider(variable) {
+            if (getQueryVariable(variable) != -1 && getQueryVariable(variable) != "") {
+                return getQueryVariable(variable)
+            } else {
+                if (variable == 'PriceMin') {
+                    return 0
+                } else if (variable == 'Page') {
+                    return 1
+                } else {
+                    return 1000
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+<header>
+    <div class="header-banner">
+        <img class="header-image" th:src="@{images/pattern2.jpg}" alt="header-image">
+        <img class="logo" th:src="@{images/VA-logo_red.png}" alt="Logo">
+        <h1>Project: Vapor-Aeon</h1>
+    </div>
+    <nav class="header" id="myHeader">
+        <div id="site-title">Project: Vapor-Aeon</div>
+        <ul id="stuff">
+            <li>
+                <form role="search">
+                    <div class="invisible">
+                        <input type="text" id="input1" name="Developer"/><br>
+                        <script>document.getElementById("input1").value = forText('Developer');</script>
+                        <input type="text" id="input2" name="Publisher"/><br>
+                        <script>document.getElementById("input2").value = forText('Publisher');</script>
+                        <input type="text" id="input3" name="PriceMin"/><br>
+                        <script>document.getElementById("input3").value = forText('PriceMin');</script>
+                        <input type="text" id="input4" name="PriceMax"/><br>
+                        <script>document.getElementById("input4").value = forText('PriceMax');</script>
+                        <input type="text" id="input5" name="Positive"/><br>
+                        <script>document.getElementById("input5").value = forText('Positive');</script>
+                        <input type="submit">
+                    </div>
+                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..."
+                           pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
+                    <script>document.getElementById("inputTitle").value = forText('Title');</script>
+
+                </form>
+            </li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/random">Random</a></li>
+        </ul>
+        <script>
+            const stuff = document.getElementById("stuff");
+            stuff.addEventListener("mouseover", (e) => {
+                e.target.style.color = "#db0952";
+            });
+            stuff.addEventListener("mouseout", (e) => {
+                e.target.style.color = "#a9abae";
+            });
+        </script>
+    </nav>
+</header>
+<div class="container">
+    <form>
+        <div class="filters">
+            <h2>Narrow by:</h2>
+            <label th:text="'Developer: '" for="inputDeveloper"></label>
+            <input type="text" class="filters_input" id="inputDeveloper" name="Developer" placeholder="Search..."
+                   pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
+            <script>document.getElementById("inputDeveloper").value = forText('Developer');</script>
+            <label th:text="'Publisher:'" for="inputPublisher"> </label>
+            <input type="text" class="filters_input" id="inputPublisher" name="Publisher" placeholder="Search..."
+                   pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
+            <script>document.getElementById("inputPublisher").value = forText('Publisher');</script>
+            <label th:text="'Price(zł): '"></label>
+            <div class="range_container">
+                <div class="sliders_control">
+                    <input id="fromSlider" type="range" value="" min="0" name="PriceMin" max="1000"/>
+                    <script>document.getElementById("fromSlider").value = forSlider('PriceMin');</script>
+                    <input id="toSlider" type="range" value="" min="0" name="PriceMax" max="1000"/>
+                    <script>document.getElementById("toSlider").value = forSlider('PriceMax');</script>
+                </div>
+                <div class="form_control">
+                    <div class="form_control_container">
+                        <div class="form_control_container__time">Min</div>
+                        <input class="form_control_container__time__input" type="number" name="PriceMin" id="fromInput"
+                               value="" min="0"
+                               max="1000"/>
+                        <script>document.getElementById("fromInput").value = forSlider('PriceMin');</script>
+                    </div>
+                    <div class="form_control_container">
+                        <div class="form_control_container__time">Max</div>
+                        <input class="form_control_container__time__input" type="number" name="PriceMax" id="toInput"
+                               value="" min="0"
+                               max="1000"/>
+                        <script>document.getElementById("toInput").value = forSlider('PriceMax');</script>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
+                    const [from, to] = getParsed(fromInput, toInput);
+                    fillSlider(fromInput, toInput, '#C6C6C6', '#ff0c50', controlSlider);
+                    if (from > to) {
+                        fromSlider.value = to;
+                        fromInput.value = to;
+                    } else {
+                        fromSlider.value = from;
+                    }
+                }
+
+                function controlToInput(toSlider, fromInput, toInput, controlSlider) {
+                    const [from, to] = getParsed(fromInput, toInput);
+                    fillSlider(fromInput, toInput, '#C6C6C6', '#ff0c50', controlSlider);
+                    setToggleAccessible(toInput);
+                    if (from <= to) {
+                        toSlider.value = to;
+                        toInput.value = to;
+                    } else {
+                        toInput.value = from;
+                    }
+                }
+
+                function controlFromSlider(fromSlider, toSlider, fromInput) {
+                    const [from, to] = getParsed(fromSlider, toSlider);
+                    fillSlider(fromSlider, toSlider, '#C6C6C6', '#ff0c50', toSlider);
+                    if (from > to) {
+                        fromSlider.value = to;
+                        fromInput.value = to;
+                    } else {
+                        fromInput.value = from;
+                    }
+                }
+
+                function controlToSlider(fromSlider, toSlider, toInput) {
+                    const [from, to] = getParsed(fromSlider, toSlider);
+                    fillSlider(fromSlider, toSlider, '#C6C6C6', '#ff0c50', toSlider);
+                    setToggleAccessible(toSlider);
+                    if (from <= to) {
+                        toSlider.value = to;
+                        toInput.value = to;
+                    } else {
+                        toInput.value = from;
+                        toSlider.value = from;
+                    }
+                }
+
+                function getParsed(currentFrom, currentTo) {
+                    if (currentFrom.value === null) {
+                        from = parseInt(0, 10);
+                    } else {
+                        from = parseInt(currentFrom.value, 10);
+                    }
+                    if (currentTo.value === null) {
+                        to = parseInt(0, 10);
+                    } else {
+                        to = parseInt(currentTo.value, 10);
+                    }
+                    return [from, to];
+                }
+
+                function fillSlider(from, to, sliderColor, rangeColor, controlSlider) {
+                    const rangeDistance = to.max - to.min;
+                    const fromPosition = from.value - to.min;
+                    const toPosition = to.value - to.min;
+                    controlSlider.style.background = `linear-gradient(
+      to right,
+      ${sliderColor} 0%,
+      ${sliderColor} ${(fromPosition) / (rangeDistance) * 100}%,
+      ${rangeColor} ${((fromPosition) / (rangeDistance)) * 100}%,
+      ${rangeColor} ${(toPosition) / (rangeDistance) * 100}%,
+      ${sliderColor} ${(toPosition) / (rangeDistance) * 100}%,
+      ${sliderColor} 100%)`;
+                }
+
+                function setToggleAccessible(currentTarget) {
+                    const toSlider = document.querySelector('#toSlider');
+                    if (Number(currentTarget.value) <= 0) {
+                        toSlider.style.zIndex = 2;
+                    } else {
+                        toSlider.style.zIndex = 0;
+                    }
+                }
+
+                const fromSlider = document.querySelector('#fromSlider');
+                const toSlider = document.querySelector('#toSlider');
+                const fromInput = document.querySelector('#fromInput');
+                const toInput = document.querySelector('#toInput');
+                fillSlider(fromSlider, toSlider, '#C6C6C6', '#ff0c50', toSlider);
+                setToggleAccessible(toSlider);
+
+                fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
+                toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
+                fromInput.oninput = () => controlFromInput(fromSlider, fromInput, toInput, toSlider);
+                toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);
+            </script>
+            <label th:text="'Positive reviews more then: '"></label>
+            <select name="Positive" id="inputPositive">
+                <option selected value="0">0%</option>
+                <option value="25">25%</option>
+                <option value="50">50%</option>
+                <option value="75">75%</option>
+                <option value="85">85%</option>
+            </select>
+            <input class="invisible" type="text" id="input6" name="Title" pattern="[A-Za-z0-9\s]{1,}"
+                   title="no spec. chars"/><br>
+            <script>document.getElementById("input6").value = forText('Title');</script>
+            <script>
+                let find = getQueryVariable('Positive');
+                if (find == -1 || find == 0) {
+                    document.getElementById("inputPositive").options.selectedIndex = 0
+                }
+                if (find == 25) {
+                    document.getElementById("inputPositive").options.selectedIndex = 1
+                }
+                if (find == 50) {
+                    document.getElementById("inputPositive").options.selectedIndex = 2
+                }
+                if (find == 75) {
+                    document.getElementById("inputPositive").options.selectedIndex = 3
+                }
+                if (find == 85) {
+                    document.getElementById("inputPositive").options.selectedIndex = 4
+                }
+            </script>
+            <br/>
+            <div id="filter_buttons">
+                <input class="filters_button" type="submit" value="Submit"/>
+                <a class="filters_button" th:href="@{/search}" th:text="'Reset'"></a>
+            </div>
+            <script>
+                const buttons = document.getElementById("filter_buttons");
+                buttons.addEventListener("mouseover", (e) => {
+                    e.target.style.background = "gray";
+                });
+                buttons.addEventListener("mouseout", (e) => {
+                    e.target.style.background = "#292f36";
+                })
+            </script>
+        </div>
+    </form>
+    <p th:text="${gamesAmount}+' games found(25 per page)'"
+       style="position: absolute; margin-left: 10px; margin-top: 450px;"></p>
+
+    <div class="games">
+        <div class="page_selector" th:if="${maxPage > 0}">
+            <div id="page_selector">
+                <button th:if="${page == 1}" class="page_selector_not_real" th:text="'<<'"></button>
+                <button th:if="${page == 1}" class="page_selector_not_real" th:text="'<'"></button>
+                <button th:if="${page > 1}" class="page_selector_real" th:text="'<<'"
+                        onclick="ControlPage('first')"></button>
+                <button th:if="${page > 1}" class="page_selector_real" th:text="'<'"
+                        onclick="ControlPage('minus')"></button>
+                <b>XDDDDDDDDDDDD</b>
+                <button th:if="${page == maxPage}" class="page_selector_not_real" th:text="'>'"></button>
+                <button th:if="${page == maxPage}" class="page_selector_not_real" th:text="'>>'"></button>
+                <button th:if="${page < maxPage}" class="page_selector_real" th:text="'>'"
+                        onclick="ControlPage('plus')"></button>
+                <button th:if="${page < maxPage}" class="page_selector_real" th:text="'>>'"
+                        onclick="ControlPage('last')"></button>
+            </div>
+            <label for="Page_number"></label>
+            <input class="page_selector_search" id="Page_number" pattern="[0-9]{1,}" title="numbers only"/>
+            <button id="page_selector_button" type="submit" class="invisible"
+                    onclick="ControlPage(getElementById('Page_number').value)"></button>
+            <script>document.getElementById("Page_number").value = forSlider('Page');</script>
+            <i class="page_selector_max_pages" th:text="'page out of '+${maxPage}"></i>
+        </div>
+        <script>
+            var input = document.getElementById("Page_number");
+            input.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    document.getElementById("page_selector_button").click();
+                }
+            });
+            const page_selector = document.getElementById("page_selector");
+            page_selector.addEventListener("mouseover", (e) => {
+                e.target.style.background = "gray";
+            });
+            page_selector.addEventListener("mouseout", (e) => {
+                e.target.style.background = "#292f36";
+            })
+        </script>
+        <p th:if="${gamesAmount == 0}" th:text="'No games found'">
+        <div>
+            <div th:if="${gamesAmount > 0}" th:each="arg: ${games}" class="gameinfo">
+                <div th:id="${arg.getElementId()}" class="gameinfo_thing invisible">
+                    <p th:text="${arg.getTitle()}" style="font-weight: bold; font-size: 19px"/>
+                    <p th:text="'Release date: '+${arg.getDate()}" style="font-size: 14px"/>
+                    <img th:src="@{${arg.getIMG_big()}}" th:alt="${arg.getTitle()}" width="317" height="148"/>
+                    <p th:text="'Dev: '+${arg.getDeveloper()}"/>
+                    <p th:text="'Pub: '+${arg.getPublisher()}"/>
+                </div>
+            </div>
+        </div>
+        <table th:if="${gamesAmount > 0}">
+            <thead>
+            <tr>
+                <th th:each="arg: ${hd}">
+                    <br th:text="${arg}">
+                </th>
+            </tr>
+            </thead>
+            <tbody id="body">
+            <tr th:each="arg: ${games}">
+                <td><img th:src="@{${arg.getIMG_small()}}" th:alt="${arg.getTitle()}"></td>
+                <td th:text="${arg.getTitle()}"  th:onmouseover="'show('+${arg.getElementId()}+')'" th:onmouseout="'hide('+${arg.getElementId()}+')'"></td>
+                <td class="sale" th:if="${arg.getSale() > 0}" th:text="'-'+${arg.getSale()}+'%'">
+                <td th:unless="${arg.getSale() > 0}" th:text="' '">
+                <td th:text="${arg.getPrice()} + ' zł'"></td>
+                <td th:text="${arg.getReviews()}">
+                <td  th:text="${arg.getPositive()} + '%'">
+                <td><a th:href="${arg.getLink()}" target="_blank">
+                <img th:src="@{${arg.getPlatform}}" style="width: 30px; height: 30px; display: block; margin-left: auto; margin-right: auto;" alt="shop"></a></td>
+            </tr>
+            </tbody>
+        </table>
+        <script>
+            function show(id) {
+                window.setTimeout(function () {
+                    let myid = document.getElementById(id);
+                    myid.classList.remove("hide")
+                    myid.style.marginTop = id * 48 + "px";
+                    myid.classList.remove("invisible")
+                    myid.classList.add("show")
+                }, 210)}
+
+
+            function hide(id) {
+                let myid = document.getElementById(id)
+                window.setTimeout( function () {
+                    myid.classList.remove("show")
+                    myid.classList.add("hide")
+                    window.setTimeout(function () {myid.classList.add("invisible")}, 200)
+                })
+            }
+        </script>
+        <div class="page_selector" th:if="${maxPage > 0}" style="margin-top: 13px;">
+            <div id="page_selector2">
+                <button th:if="${page == 1}" class="page_selector_not_real" th:text="'<<'"></button>
+                <button th:if="${page == 1}" class="page_selector_not_real" th:text="'<'"></button>
+                <button th:if="${page > 1}" class="page_selector_real" th:text="'<<'"
+                        onclick="ControlPage('first')"></button>
+                <button th:if="${page > 1}" class="page_selector_real" th:text="'<'"
+                        onclick="ControlPage('minus')"></button>
+                <b>XDDDDDDDDDDDD</b>
+                <button th:if="${page == maxPage}" class="page_selector_not_real" th:text="'>'"></button>
+                <button th:if="${page == maxPage}" class="page_selector_not_real" th:text="'>>'"></button>
+                <button th:if="${page < maxPage}" class="page_selector_real" th:text="'>'"
+                        onclick="ControlPage('plus')"></button>
+                <button th:if="${page < maxPage}" class="page_selector_real" th:text="'>>'"
+                        onclick="ControlPage('last')"></button>
+            </div>
+            <label for="Page_number"></label>
+            <input class="page_selector_search" id="Page_number2" pattern="[0-9]{1,}" title="numbers only"/>
+            <button id="page_selector_button2" type="submit" class="invisible"
+                    onclick="ControlPage(getElementById('Page_number2').value)"></button>
+            <script>document.getElementById("Page_number2").value = forSlider('Page');</script>
+            <i class="page_selector_max_pages" th:text="'page out of '+${maxPage}"></i>
+        </div>
+        <script>
+            var input = document.getElementById("Page_number2");
+            input.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    document.getElementById("page_selector_button2").click();
+                }
+            });
+            const page_selector2 = document.getElementById("page_selector2");
+            page_selector2.addEventListener("mouseover", (e) => {
+                e.target.style.background = "gray";
+            });
+            page_selector2.addEventListener("mouseout", (e) => {
+                e.target.style.background = "#292f36";
+            })
+        </script>
+    </div>
+</div>
+<button onclick="topFunction()" id="myBtn" title="Go to top">⇑</button>
+<script>
+    let mybutton = document.getElementById("myBtn");
+    window.onscroll = function () {
+        scrollFunction()
+    };
+    var header = document.getElementById("myHeader");
+    var sticky = header.offsetTop;
+
+    function timeout() {
+        if (document.documentElement.scrollTop > 400) {
+            mybutton.style.display = "block"
+        } else {
+            mybutton.style.display = "none"
+        }
+    }
+
+    function scrollFunction() {
+        if (document.documentElement.scrollTop > 400) {
+            mybutton.style.display = "block";
+            mybutton.classList.add("animation-button-in")
+            mybutton.classList.remove("animation-button-out")
+        } else {
+            mybutton.classList.add("animation-button-out")
+            mybutton.classList.remove("animation-button-in")
+            window.setTimeout(timeout, 1000)
+        }
+        if (window.pageYOffset > sticky) {
+            header.classList.add("fixed");
+        } else {
+            header.classList.remove("fixed");
+        }
+    }
+
+    function topFunction() {
+        document.documentElement.scrollTop = 0;
+        console.log(document.location.search.substr(1))
+    }
+</script>
+<div class="footer">
+    <p style="text-align: center; font-size: 22px; font-style: italic">Project created by Mykyta Boyko & Adam Madoń</p>
+</div>
+</body>
+</html>

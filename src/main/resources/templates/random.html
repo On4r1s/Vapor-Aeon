@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Random Game</title>
+    <link rel="icon" th:src="@{images/VA-logo.png}">
+    <link rel="stylesheet" href="styleRandomPage.css">
+    <script>
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+            return -1;
+        }
+
+        function forText(variable) {
+            console.log()
+            if (getQueryVariable(variable) != -1 && getQueryVariable(variable) != "") {
+                return getQueryVariable(variable)
+            } else {
+                return null
+            }
+        }
+    </script>
+</head>
+
+<body>
+<header>
+    <div class="header-banner">
+        <img class="header-image" th:src="@{images/pattern2.jpg}" alt="header-image">
+        <img class="logo" th:src="@{images/VA-logo_red.png}" alt="Logo">
+        <h1>Project: Vapor-Aeon</h1>
+    </div>
+    <nav class="header" id="myHeader">
+        <div id="site-title">Project: Vapor-Aeon</div>
+        <ul id="stuff">
+            <li>
+                <form role="search" action="/search">
+                    <div class="invisible">
+                        <input type="text" id="input1" name="Developer" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <script>document.getElementById("input1").value = forText('Developer');</script>
+                        <input type="text" id="input2" name="Publisher" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <script>document.getElementById("input2").value = forText('Publisher');</script>
+                        <input type="text" id="input3" name="PriceMin" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <script>document.getElementById("input3").value = forText('PriceMin');</script>
+                        <input type="text" id="input4" name="PriceMax" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <script>document.getElementById("input4").value = forText('PriceMax');</script>
+                        <input type="text" id="input5" name="Positive" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <script>document.getElementById("input5").value = forText('Positive');</script>
+                        <input type="submit">
+                    </div>
+                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..." pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                    <script>document.getElementById("inputTitle").value = forText('Title');</script>
+                </form>
+            </li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/random">Random</a></li>
+        </ul>
+        <script>
+            const stuff = document.getElementById("stuff");
+            stuff.addEventListener("mouseover", (e) => {
+                e.target.style.color = "#db0952";
+            });
+            stuff.addEventListener("mouseout", (e) => {
+                e.target.style.color = "#a9abae";
+            });
+        </script>
+    </nav>
+</header>
+<table>
+    <thead>
+    <tr>
+        <th th:each="arg: ${hd}">
+            <br th:text="${arg}">
+        </th>
+    </tr>
+    </thead>
+    <tr th:each="arg: ${game}">
+        <td><img th:src="@{${arg.getIMG()}}" th:alt = "${arg.getTitle()}"></td>
+        <td th:text="${arg.getTitle()}"></td>
+        <td th:text="${arg.getDeveloper()}">
+        <td th:text="${arg.getPublisher()}">
+        <td th:text="${arg.getPrice()} + ' zł'"></td>
+        <td th:text="${arg.getReviews()}">
+        <td th:text="${arg.getPositive()} + '%'">
+        <td th:text="${arg.getSale()}">
+        <td th:text="${arg.getDate()}">
+        <td><a th:href="${arg.getLink()}" target="_blank"><img th:src="@{${arg.getPlatform}}" style="width: 30px; height: 30px" alt="shop"></a></td>
+    </tr>
+</table>
+</body>
+</html>
