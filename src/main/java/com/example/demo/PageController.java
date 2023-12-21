@@ -79,7 +79,10 @@ public class PageController {
     //all games by filters(max 1000)   search/random
     private void gamelist(Filters filter, Boolean random) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/games", "Client", "");
-        String question = "FROM steam WHERE Title LIKE '%%%s%%' and Developer LIKE '%%%s%%' and Publisher LIKE '%%%s%%' and Price between %d and %d and Positive between %d and 100 order by Reviews DESC LIMIT 1000;".formatted(filter.getByTitle(), filter.getByDeveloper(), filter.getByPublisher(), (int) filter.getByPriceMin() * 100, (int) filter.getByPriceMax() * 100, filter.getByPositive());
+        String question = ("FROM steam WHERE Title LIKE '%%%s%%' and Developer LIKE '%%%s%%' and Publisher LIKE '%%%s%%'" +
+                " and Price between %d and %d and Positive between %d and 100 order by Reviews DESC LIMIT 1000;")
+                .formatted(filter.getByTitle(), filter.getByDeveloper(), filter.getByPublisher(),
+                        (int) filter.getByPriceMin() * 100, (int) filter.getByPriceMax() * 100, filter.getByPositive());
         int columns_amount = 13;
         String[] Row = new String[columns_amount];
         ResultSet rs;
