@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Random Game</title>
     <link rel="icon" th:src="@{images/VA-logo.png}">
-    <link rel="stylesheet" href="styleRandomPage.css">
+    <link rel="stylesheet" href="style.css">
     <script>
         function getQueryVariable(variable) {
             var query = window.location.search.substring(1);
@@ -20,9 +20,10 @@
         }
 
         function forText(variable) {
-            console.log()
-            if (getQueryVariable(variable) != -1 && getQueryVariable(variable) != "") {
-                return getQueryVariable(variable)
+            let text = getQueryVariable(variable);
+            text = String(text).replaceAll("+", " ");
+            if (text != -1 && text != "") {
+                return text
             } else {
                 return null
             }
@@ -41,21 +42,22 @@
         <div id="site-title">Project: Vapor-Aeon</div>
         <ul id="stuff">
             <li>
-                <form role="search" action="/search">
+                <form role="search">
                     <div class="invisible">
-                        <input type="text" id="input1" name="Developer" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input1" name="Developer"/><br>
                         <script>document.getElementById("input1").value = forText('Developer');</script>
-                        <input type="text" id="input2" name="Publisher" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input2" name="Publisher"/><br>
                         <script>document.getElementById("input2").value = forText('Publisher');</script>
-                        <input type="text" id="input3" name="PriceMin" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input3" name="PriceMin"/><br>
                         <script>document.getElementById("input3").value = forText('PriceMin');</script>
-                        <input type="text" id="input4" name="PriceMax" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input4" name="PriceMax"/><br>
                         <script>document.getElementById("input4").value = forText('PriceMax');</script>
-                        <input type="text" id="input5" name="Positive" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input5" name="Positive"/><br>
                         <script>document.getElementById("input5").value = forText('Positive');</script>
                         <input type="submit">
                     </div>
-                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..." pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..."
+                           pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
                     <script>document.getElementById("inputTitle").value = forText('Title');</script>
                 </form>
             </li>
@@ -73,26 +75,40 @@
         </script>
     </nav>
 </header>
-<table>
-    <thead>
-    <tr>
-        <th th:each="arg: ${hd}">
-            <br th:text="${arg}">
-        </th>
-    </tr>
-    </thead>
-    <tr th:each="arg: ${game}">
-        <td><img th:src="@{${arg.getIMG()}}" th:alt = "${arg.getTitle()}"></td>
-        <td th:text="${arg.getTitle()}"></td>
-        <td th:text="${arg.getDeveloper()}">
-        <td th:text="${arg.getPublisher()}">
-        <td th:text="${arg.getPrice()} + ' zł'"></td>
-        <td th:text="${arg.getReviews()}">
-        <td th:text="${arg.getPositive()} + '%'">
-        <td th:text="${arg.getSale()}">
-        <td th:text="${arg.getDate()}">
-        <td><a th:href="${arg.getLink()}" target="_blank"><img th:src="@{${arg.getPlatform}}" style="width: 30px; height: 30px" alt="shop"></a></td>
-    </tr>
-</table>
+<img style="display: block; margin-left: auto; margin-right: auto" width="385" height="180"  th:src="@{${game.getIMG_big()}}" th:alt="${game.getTitle()}">
+<div class="centered">
+    <strong th:text="'Title: '"/>
+    <t th:text="${game.getTitle()}"/>
+</div>
+<div class="centered">
+    <strong th:text="'Developer: '"/>
+    <t th:text="${game.getDeveloper()}"/>
+</div>
+<div class="centered">
+    <strong th:text="'Publisher: '"/>
+    <t th:text="${game.getPublisher()}"/>
+</div>
+<div class="centered">
+    <strong th:text="'Price: '"/>
+    <t style="color: red" th:text="' -'+${game.getSale()}+'%'" th:if="${game.getSale() != 0}"/>
+    <del th:text="${oldcost}+'zł'" th:if="${game.getSale() != 0}"/>
+    <t th:text="${game.getPrice()}+'zł'"/>
+</div>
+<div class="centered">
+    <strong th:text="'Reviews: '"/>
+    <t style="color: green" th:text="${revs[0]}"/>
+    <t th:text="'/'"/>
+    <t style="color: red" th:text="${revs[1]}"/>
+</div>
+<div class="centered">
+    <strong th:text="'Release date: '"/>
+    <t th:text="${game.getDate()}"/>
+</div>
+<div class="centered">
+    <strong th:text="'↓'"/>
+</div>
+<div class="centered">
+    <t><a th:href="${game.getLink()}" target="_blank"><img th:src="@{${game.getPlatform}}" style="width: 30px; height: 30px; display: block; margin-left: auto; margin-right: auto;" alt="shop"></a></t>
+</div>
 </body>
 </html>

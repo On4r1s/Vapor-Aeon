@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>Game Search</title>
     <link rel="icon" th:src="@{images/VA-logo.png}">
-    <link rel="stylesheet" href="styleSearchPage.css">
+    <link rel="stylesheet" href="style.css">
     <script th:inline="javascript">
         function ControlPage(doing) {
             var link = document.location.search.substr(1);
@@ -63,7 +63,7 @@
 
         function forText(variable) {
             let text = getQueryVariable(variable);
-            text = text.replaceAll("+", " ");
+            text = String(text).replaceAll("+", " ");
             if (text != -1 && text != "") {
                 return text
             } else {
@@ -71,9 +71,10 @@
             }
         }
 
-        function forSlider(variable) {
-            if (getQueryVariable(variable) != -1 && getQueryVariable(variable) != "") {
-                return getQueryVariable(variable)
+        function forNumbers(variable) {
+            let num = parseInt(getQueryVariable(variable));
+            if (num != -1 && num != "" && !isNaN(num)) {
+                return num
             } else {
                 if (variable == 'PriceMin') {
                     return 0
@@ -115,7 +116,6 @@
                     <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..."
                            pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
                     <script>document.getElementById("inputTitle").value = forText('Title');</script>
-
                 </form>
             </li>
             <li><a href="/search">Search</a></li>
@@ -148,9 +148,9 @@
             <div class="range_container">
                 <div class="sliders_control">
                     <input id="fromSlider" type="range" value="" min="0" name="PriceMin" max="1000"/>
-                    <script>document.getElementById("fromSlider").value = forSlider('PriceMin');</script>
+                    <script>document.getElementById("fromSlider").value = forNumbers('PriceMin');</script>
                     <input id="toSlider" type="range" value="" min="0" name="PriceMax" max="1000"/>
-                    <script>document.getElementById("toSlider").value = forSlider('PriceMax');</script>
+                    <script>document.getElementById("toSlider").value = forNumbers('PriceMax');</script>
                 </div>
                 <div class="form_control">
                     <div class="form_control_container">
@@ -158,14 +158,14 @@
                         <input class="form_control_container__time__input" type="number" name="PriceMin" id="fromInput"
                                value="" min="0"
                                max="1000"/>
-                        <script>document.getElementById("fromInput").value = forSlider('PriceMin');</script>
+                        <script>document.getElementById("fromInput").value = forNumbers('PriceMin');</script>
                     </div>
                     <div class="form_control_container">
                         <div class="form_control_container__time">Max</div>
                         <input class="form_control_container__time__input" type="number" name="PriceMax" id="toInput"
                                value="" min="0"
                                max="1000"/>
-                        <script>document.getElementById("toInput").value = forSlider('PriceMax');</script>
+                        <script>document.getElementById("toInput").value = forNumbers('PriceMax');</script>
                     </div>
                 </div>
             </div>
@@ -335,7 +335,7 @@
             <input class="page_selector_search" id="Page_number" pattern="[0-9]{1,}" title="numbers only"/>
             <button id="page_selector_button" type="submit" class="invisible"
                     onclick="ControlPage(getElementById('Page_number').value)"></button>
-            <script>document.getElementById("Page_number").value = forSlider('Page');</script>
+            <script>document.getElementById("Page_number").value = forNumbers('Page');</script>
             <i class="page_selector_max_pages" th:text="'page out of '+${maxPage}"></i>
         </div>
         <script>
@@ -368,20 +368,24 @@
         <table th:if="${gamesAmount > 0}">
             <thead>
             <tr>
-                <th th:each="arg: ${hd}">
-                    <br th:text="${arg}">
-                </th>
+                <th th:text="''"></th>
+                <th th:text="'Title'"></th>
+                <th th:text="''"></th>
+                <th th:text="'Price'"></th>
+                <th th:text="'Reviews'"></th>
+                <th th:text="'Positive'"></th>
+                <th th:text="'Platform'"></th>
             </tr>
             </thead>
             <tbody id="body">
             <tr th:each="arg: ${games}">
                 <td><img th:src="@{${arg.getIMG_small()}}" th:alt="${arg.getTitle()}"></td>
-                <td th:text="${arg.getTitle()}"  th:onmouseover="'show('+${arg.getElementId()}+')'" th:onmouseout="'hide('+${arg.getElementId()}+')'"></td>
-                <td class="sale" th:if="${arg.getSale() > 0}" th:text="'-'+${arg.getSale()}+'%'">
-                <td th:unless="${arg.getSale() > 0}" th:text="' '">
-                <td th:text="${arg.getPrice()} + ' zł'"></td>
-                <td th:text="${arg.getReviews()}">
-                <td  th:text="${arg.getPositive()} + '%'">
+                <td style="max-width: 300px" th:text="${arg.getTitle()}"  th:onmouseover="'show('+${arg.getElementId()}+')'" th:onmouseout="'hide('+${arg.getElementId()}+')'"></td>
+                <td style="text-align: center; color: red" th:if="${arg.getSale() > 0}" th:text="'-'+${arg.getSale()}+'%'">
+                <td style="text-align: center" th:unless="${arg.getSale() > 0}" th:text="' '">
+                <td style="text-align: center" th:text="${arg.getPrice()} + ' zł'"></td>
+                <td style="text-align: center" th:text="${arg.getReviews()}">
+                <td style="text-align: center" th:text="${arg.getPositive()} + '%'">
                 <td><a th:href="${arg.getLink()}" target="_blank">
                 <img th:src="@{${arg.getPlatform}}" style="width: 30px; height: 30px; display: block; margin-left: auto; margin-right: auto;" alt="shop"></a></td>
             </tr>
@@ -427,7 +431,7 @@
             <input class="page_selector_search" id="Page_number2" pattern="[0-9]{1,}" title="numbers only"/>
             <button id="page_selector_button2" type="submit" class="invisible"
                     onclick="ControlPage(getElementById('Page_number2').value)"></button>
-            <script>document.getElementById("Page_number2").value = forSlider('Page');</script>
+            <script>document.getElementById("Page_number2").value = forNumbers('Page');</script>
             <i class="page_selector_max_pages" th:text="'page out of '+${maxPage}"></i>
         </div>
         <script>

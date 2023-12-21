@@ -13,7 +13,8 @@ p {
 }
 
 table {
-    border-spacing: 0;
+    border-width: 1px;
+    border-color: black;
 }
 
 h1 {
@@ -58,15 +59,18 @@ label {
     display: block;
 }
 
+.centered {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 300px;
+    font-size: 18px;
+}
+
 /* games */
 
 .games {
     margin-left: 400px;
-}
-
-.sale {
-    color: red;
-
 }
 
 .gameinfo {
@@ -301,7 +305,7 @@ nav ul li a {
     z-index: 99; /* Make sure it does not overlap */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
-    background-color: #2d046e; /* Set a background color */
+    background-color: #292f36; /* Set a background color */
     color: #ff0c50; /* Text color */
     cursor: pointer; /* Add a mouse pointer on hover */
     padding: 15px; /* Some padding */

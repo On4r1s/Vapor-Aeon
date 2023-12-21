@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Error</title>
     <link rel="icon" th:src="@{images/VA-logo.png}">
-    <link rel="stylesheet" href="styleErrorPage.css">
+    <link rel="stylesheet" href="style.css">
     <script>
         function getQueryVariable(variable) {
             var query = window.location.search.substring(1);
@@ -20,9 +20,10 @@
         }
 
         function forText(variable) {
-            console.log()
-            if (getQueryVariable(variable) != -1 && getQueryVariable(variable) != "") {
-                return getQueryVariable(variable)
+            let text = getQueryVariable(variable);
+            text = text.replaceAll("+", " ");
+            if (text != -1 && text != "") {
+                return text
             } else {
                 return null
             }
@@ -41,21 +42,22 @@
         <div id="site-title">Project: Vapor-Aeon</div>
         <ul id="stuff">
             <li>
-                <form role="search" action="/search">
+                <form role="search">
                     <div class="invisible">
-                        <input type="text" id="input1" name="Developer" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input1" name="Developer"/><br>
                         <script>document.getElementById("input1").value = forText('Developer');</script>
-                        <input type="text" id="input2" name="Publisher" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input2" name="Publisher"/><br>
                         <script>document.getElementById("input2").value = forText('Publisher');</script>
-                        <input type="text" id="input3" name="PriceMin" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input3" name="PriceMin"/><br>
                         <script>document.getElementById("input3").value = forText('PriceMin');</script>
-                        <input type="text" id="input4" name="PriceMax" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input4" name="PriceMax"/><br>
                         <script>document.getElementById("input4").value = forText('PriceMax');</script>
-                        <input type="text" id="input5" name="Positive" pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                        <input type="text" id="input5" name="Positive"/><br>
                         <script>document.getElementById("input5").value = forText('Positive');</script>
                         <input type="submit">
                     </div>
-                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..." pattern="[A-Za-z0-9]{1,}" title="no spec. chars"/><br>
+                    <input class="header-search" type="text" id="inputTitle" name="Title" placeholder="Search..."
+                           pattern="[A-Za-z0-9\s]{1,}" title="no spec. chars"/><br>
                     <script>document.getElementById("inputTitle").value = forText('Title');</script>
                 </form>
             </li>
@@ -73,6 +75,6 @@
         </script>
     </nav>
 </header>
-<h1 th:text="${error}"></h1>
+<h1 style="color: #1c046c" th:text="${error}"></h1>
 </body>
 </html>
