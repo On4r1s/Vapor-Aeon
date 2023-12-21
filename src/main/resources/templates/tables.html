@@ -8,17 +8,17 @@
     <link rel="stylesheet" href="style.css">
     <script th:inline="javascript">
         function ControlPage(doing) {
-            var link = document.location.search.substr(1);
+            var link = document.location.search.substring(1);
             var oldpage = parseInt(document.getElementById("Page_number").value);
-            var newpage = 1;
             var maxpage = /*[[${maxPage}]]*/ 1;
-            if (doing == 'first') {
+            var newpage;
+            if (doing === "first") {
                 newpage = 1;
-            } else if (doing == 'minus') {
+            } else if (doing === "minus") {
                 newpage = oldpage - 1;
-            } else if (doing == 'plus') {
+            } else if (doing === "plus") {
                 newpage = oldpage + 1;
-            } else if (doing == 'last') {
+            } else if (doing === "last") {
                 newpage = maxpage;
             } else {
                 newpage = parseInt(doing);
@@ -58,13 +58,13 @@
                     return pair[1];
                 }
             }
-            return -1;
+            return "--not found--";
         }
 
         function forText(variable) {
-            let text = getQueryVariable(variable);
-            text = String(text).replaceAll("+", " ");
-            if (text != -1 && text != "") {
+            let text = String(getQueryVariable(variable));
+            text = text.replaceAll("+", " ");
+            if (text !== "--not found--" && text !== "") {
                 return text
             } else {
                 return null
@@ -72,13 +72,13 @@
         }
 
         function forNumbers(variable) {
-            let num = parseInt(getQueryVariable(variable));
-            if (num != -1 && num != "" && !isNaN(num)) {
+            let num = String(getQueryVariable(variable));
+            if (num !== "--not found--" && num !== "") {
                 return num
             } else {
-                if (variable == 'PriceMin') {
+                if (variable === "PriceMin") {
                     return 0
-                } else if (variable == 'Page') {
+                } else if (variable === "Page") {
                     return 1
                 } else {
                     return 1000
@@ -101,15 +101,15 @@
             <li>
                 <form role="search">
                     <div class="invisible">
-                        <input type="text" id="input1" name="Developer"/><br>
+                        <label for="input1"></label><input type="text" id="input1" name="Developer"/><br>
                         <script>document.getElementById("input1").value = forText('Developer');</script>
-                        <input type="text" id="input2" name="Publisher"/><br>
+                        <label for="input2"></label><input type="text" id="input2" name="Publisher"/><br>
                         <script>document.getElementById("input2").value = forText('Publisher');</script>
-                        <input type="text" id="input3" name="PriceMin"/><br>
+                        <label for="input3"></label><input type="text" id="input3" name="PriceMin"/><br>
                         <script>document.getElementById("input3").value = forText('PriceMin');</script>
-                        <input type="text" id="input4" name="PriceMax"/><br>
+                        <label for="input4"></label><input type="text" id="input4" name="PriceMax"/><br>
                         <script>document.getElementById("input4").value = forText('PriceMax');</script>
-                        <input type="text" id="input5" name="Positive"/><br>
+                        <label for="input5"></label><input type="text" id="input5" name="Positive"/><br>
                         <script>document.getElementById("input5").value = forText('Positive');</script>
                         <input type="submit">
                     </div>
@@ -147,24 +147,24 @@
             <label th:text="'Price(zł): '"></label>
             <div class="range_container">
                 <div class="sliders_control">
-                    <input id="fromSlider" type="range" value="" min="0" name="PriceMin" max="1000"/>
+                    <label for="fromSlider"></label><input id="fromSlider" type="range" value="" min="0" name="PriceMin" max="1000"/>
                     <script>document.getElementById("fromSlider").value = forNumbers('PriceMin');</script>
-                    <input id="toSlider" type="range" value="" min="0" name="PriceMax" max="1000"/>
+                    <label for="toSlider"></label><input id="toSlider" type="range" value="" min="0" name="PriceMax" max="1000"/>
                     <script>document.getElementById("toSlider").value = forNumbers('PriceMax');</script>
                 </div>
                 <div class="form_control">
                     <div class="form_control_container">
                         <div class="form_control_container__time">Min</div>
-                        <input class="form_control_container__time__input" type="number" name="PriceMin" id="fromInput"
-                               value="" min="0"
-                               max="1000"/>
+                        <label for="fromInput"></label><input class="form_control_container__time__input" type="number" name="PriceMin" id="fromInput"
+                                                              value="" min="0"
+                                                              max="1000"/>
                         <script>document.getElementById("fromInput").value = forNumbers('PriceMin');</script>
                     </div>
                     <div class="form_control_container">
                         <div class="form_control_container__time">Max</div>
-                        <input class="form_control_container__time__input" type="number" name="PriceMax" id="toInput"
-                               value="" min="0"
-                               max="1000"/>
+                        <label for="toInput"></label><input class="form_control_container__time__input" type="number" name="PriceMax" id="toInput"
+                                                            value="" min="0"
+                                                            max="1000"/>
                         <script>document.getElementById("toInput").value = forNumbers('PriceMax');</script>
                     </div>
                 </div>
@@ -267,7 +267,7 @@
                 toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);
             </script>
             <label th:text="'Positive reviews more then: '"></label>
-            <select name="Positive" id="inputPositive">
+            <label for="inputPositive"></label><select name="Positive" id="inputPositive">
                 <option selected value="0">0%</option>
                 <option value="25">25%</option>
                 <option value="50">50%</option>
@@ -278,20 +278,20 @@
                    title="no spec. chars"/><br>
             <script>document.getElementById("input6").value = forText('Title');</script>
             <script>
-                let find = getQueryVariable('Positive');
-                if (find == -1 || find == 0) {
+                let find = String(getQueryVariable("Positive"));
+                if (find === "--not found--" || find === "0") {
                     document.getElementById("inputPositive").options.selectedIndex = 0
                 }
-                if (find == 25) {
+                if (find === "25") {
                     document.getElementById("inputPositive").options.selectedIndex = 1
                 }
-                if (find == 50) {
+                if (find === "50") {
                     document.getElementById("inputPositive").options.selectedIndex = 2
                 }
-                if (find == 75) {
+                if (find === "75") {
                     document.getElementById("inputPositive").options.selectedIndex = 3
                 }
-                if (find == 85) {
+                if (find === "85") {
                     document.getElementById("inputPositive").options.selectedIndex = 4
                 }
             </script>

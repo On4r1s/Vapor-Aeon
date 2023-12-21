@@ -16,13 +16,13 @@
                     return pair[1];
                 }
             }
-            return -1;
+            return "--not found--";
         }
 
         function forText(variable) {
-            let text = getQueryVariable(variable);
+            let text = String(getQueryVariable(variable));
             text = text.replaceAll("+", " ");
-            if (text != -1 && text != "") {
+            if (text !== "--not found--" && text !== "") {
                 return text
             } else {
                 return null
@@ -44,15 +44,15 @@
             <li>
                 <form role="search">
                     <div class="invisible">
-                        <input type="text" id="input1" name="Developer"/><br>
+                        <label for="input1"></label><input type="text" id="input1" name="Developer"/><br>
                         <script>document.getElementById("input1").value = forText('Developer');</script>
-                        <input type="text" id="input2" name="Publisher"/><br>
+                        <label for="input2"></label><input type="text" id="input2" name="Publisher"/><br>
                         <script>document.getElementById("input2").value = forText('Publisher');</script>
-                        <input type="text" id="input3" name="PriceMin"/><br>
+                        <label for="input3"></label><input type="text" id="input3" name="PriceMin"/><br>
                         <script>document.getElementById("input3").value = forText('PriceMin');</script>
-                        <input type="text" id="input4" name="PriceMax"/><br>
+                        <label for="input4"></label><input type="text" id="input4" name="PriceMax"/><br>
                         <script>document.getElementById("input4").value = forText('PriceMax');</script>
-                        <input type="text" id="input5" name="Positive"/><br>
+                        <label for="input5"></label><input type="text" id="input5" name="Positive"/><br>
                         <script>document.getElementById("input5").value = forText('Positive');</script>
                         <input type="submit">
                     </div>

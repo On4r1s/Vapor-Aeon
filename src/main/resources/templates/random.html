@@ -16,13 +16,13 @@
                     return pair[1];
                 }
             }
-            return -1;
+            return "--not found--";
         }
 
         function forText(variable) {
-            let text = getQueryVariable(variable);
-            text = String(text).replaceAll("+", " ");
-            if (text != -1 && text != "") {
+            let text = String(getQueryVariable(variable));
+            text = text.replaceAll("+", " ");
+            if (text !== "--not found--" && text !== "") {
                 return text
             } else {
                 return null
@@ -44,15 +44,15 @@
             <li>
                 <form role="search">
                     <div class="invisible">
-                        <input type="text" id="input1" name="Developer"/><br>
+                        <label for="input1"></label><input type="text" id="input1" name="Developer"/><br>
                         <script>document.getElementById("input1").value = forText('Developer');</script>
-                        <input type="text" id="input2" name="Publisher"/><br>
+                        <label for="input2"></label><input type="text" id="input2" name="Publisher"/><br>
                         <script>document.getElementById("input2").value = forText('Publisher');</script>
-                        <input type="text" id="input3" name="PriceMin"/><br>
+                        <label for="input3"></label><input type="text" id="input3" name="PriceMin"/><br>
                         <script>document.getElementById("input3").value = forText('PriceMin');</script>
-                        <input type="text" id="input4" name="PriceMax"/><br>
+                        <label for="input4"></label><input type="text" id="input4" name="PriceMax"/><br>
                         <script>document.getElementById("input4").value = forText('PriceMax');</script>
-                        <input type="text" id="input5" name="Positive"/><br>
+                        <label for="input5"></label><input type="text" id="input5" name="Positive"/><br>
                         <script>document.getElementById("input5").value = forText('Positive');</script>
                         <input type="submit">
                     </div>
@@ -78,37 +78,37 @@
 <img style="display: block; margin-left: auto; margin-right: auto" width="385" height="180"  th:src="@{${game.getIMG_big()}}" th:alt="${game.getTitle()}">
 <div class="centered">
     <strong th:text="'Title: '"/>
-    <t th:text="${game.getTitle()}"/>
+    <a th:text="${game.getTitle()}"/>
 </div>
 <div class="centered">
     <strong th:text="'Developer: '"/>
-    <t th:text="${game.getDeveloper()}"/>
+    <a th:text="${game.getDeveloper()}"/>
 </div>
 <div class="centered">
     <strong th:text="'Publisher: '"/>
-    <t th:text="${game.getPublisher()}"/>
+    <a th:text="${game.getPublisher()}"/>
 </div>
 <div class="centered">
     <strong th:text="'Price: '"/>
-    <t style="color: red" th:text="' -'+${game.getSale()}+'%'" th:if="${game.getSale() != 0}"/>
+    <a style="color: red" th:text="' -'+${game.getSale()}+'%'" th:if="${game.getSale() != 0}"/>
     <del th:text="${oldcost}+'zł'" th:if="${game.getSale() != 0}"/>
-    <t th:text="${game.getPrice()}+'zł'"/>
+    <a th:text="${game.getPrice()}+'zł'"/>
 </div>
 <div class="centered">
     <strong th:text="'Reviews: '"/>
-    <t style="color: green" th:text="${revs[0]}"/>
-    <t th:text="'/'"/>
-    <t style="color: red" th:text="${revs[1]}"/>
+    <a style="color: green" th:text="${revs[0]}"/>
+    <a th:text="'/'"/>
+    <a style="color: red" th:text="${revs[1]}"/>
 </div>
 <div class="centered">
     <strong th:text="'Release date: '"/>
-    <t th:text="${game.getDate()}"/>
+    <a th:text="${game.getDate()}"/>
 </div>
 <div class="centered">
     <strong th:text="'↓'"/>
 </div>
 <div class="centered">
-    <t><a th:href="${game.getLink()}" target="_blank"><img th:src="@{${game.getPlatform}}" style="width: 30px; height: 30px; display: block; margin-left: auto; margin-right: auto;" alt="shop"></a></t>
+    <a th:href="${game.getLink()}" target="_blank"><img th:src="@{${game.getPlatform}}" style="width: 30px; height: 30px; display: block; margin-left: auto; margin-right: auto;" alt="shop"></a>
 </div>
 </body>
 </html>
